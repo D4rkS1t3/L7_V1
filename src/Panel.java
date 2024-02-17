@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -10,6 +13,7 @@ public class Panel extends JPanel implements MouseWheelListener {
     private int size = 20;
     private Timer timer;
     private final int DELAY = 16; // dla 60fps -> 1s/60 = 0,016s
+    private int sumCollision=0;
 
     public Panel() {
         listaKul = new ArrayList<>();
@@ -52,8 +56,33 @@ public class Panel extends JPanel implements MouseWheelListener {
                 double distance=Math.sqrt(dx*dx+dy*dy);
                 if (distance<k1.size/2+k2.size/2) {
                     resolveCollsion(k1, k2);
+                    checkSave(k1,k2);
                 }
             }
+        }
+    }
+
+    private void saveCollison(Kula k1, Kula k2) {
+        File fileName=new File("collision.txt");
+        try {
+            FileWriter file=new FileWriter(fileName, true);
+            file.append("kula1 x:"+k1.x+", y:"+k1.y+" rozmiar "+k1.size+" kula2 x:"+k2.x+", y:"+k2.y+" rozmiar "+k2.size+"\n");
+            file.close();
+        } catch (IOException e) {
+            System.err.println(e.getCause());
+        }
+    }
+
+    private void checkSave(Kula k1, Kula k2) {
+        if (listaKul.size()>50) {
+            sumCollision++;
+            if (sumCollision>=30) {
+                saveCollison(k1,k2);
+                sumCollision=0;
+            }
+        }
+        else {
+            saveCollison(k1,k2);
         }
     }
 
