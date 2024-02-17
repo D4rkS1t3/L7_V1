@@ -63,15 +63,17 @@ public class Panel extends JPanel implements MouseWheelListener {
     }
 
     private void saveCollison(Kula k1, Kula k2) {
-        File fileName=new File("collision.txt");
-        try {
-            FileWriter file=new FileWriter(fileName, true);
-            file.append("kula1 x:"+k1.x+", y:"+k1.y+" rozmiar "+k1.size+" kula2 x:"+k2.x+", y:"+k2.y+" rozmiar "+k2.size+"\n");
-            file.close();
+        File fileName = new File("collision.txt");
+        try (FileWriter file = new FileWriter(fileName, true)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("kula1 x:").append(k1.x).append(", y:").append(k1.y).append(" rozmiar ").append(k1.size)
+                    .append(" kula2 x:").append(k2.x).append(", y:").append(k2.y).append(" rozmiar ").append(k2.size).append("\n");
+            file.append(sb.toString());
         } catch (IOException e) {
-            System.err.println(e.getCause());
+            System.err.println("Błąd zapisu: " + e.getMessage());
         }
     }
+
 
     private void checkSave(Kula k1, Kula k2) {
         if (listaKul.size()>50) {
