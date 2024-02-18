@@ -62,29 +62,28 @@ public class Panel extends JPanel implements MouseWheelListener {
         }
     }
 
-    private void saveCollison(Kula k1, Kula k2) {
-        File fileName = new File("collision.txt");
-        try (FileWriter file = new FileWriter(fileName, true)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("kula1 x:").append(k1.x).append(", y:").append(k1.y).append(" rozmiar ").append(k1.size)
-                    .append(" kula2 x:").append(k2.x).append(", y:").append(k2.y).append(" rozmiar ").append(k2.size).append("\n");
-            file.append(sb.toString());
+    public void saveCollision(Kula kula) {
+        try (FileWriter fileWriter = new FileWriter("collision.csv", true)) {
+            fileWriter.write(kula.x + "," + kula.y + "," + kula.size + "\n");
         } catch (IOException e) {
-            System.err.println("Błąd zapisu: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
 
     private void checkSave(Kula k1, Kula k2) {
         if (listaKul.size()>50) {
             sumCollision++;
             if (sumCollision>=30) {
-                saveCollison(k1,k2);
+                saveCollision(k1);
+                saveCollision(k2);
                 sumCollision=0;
             }
         }
         else {
-            saveCollison(k1,k2);
+            saveCollision(k1);
+            saveCollision(k2);
         }
     }
 
@@ -128,33 +127,5 @@ public class Panel extends JPanel implements MouseWheelListener {
         }
     }
 
-    private class Kula {
-        public int x, y, size, xspeed, yspeed;
-        public Color color;
-        private final int MAX_SPEED = 5;
 
-        public Kula(int x, int y, int size) {
-            this.x = x;
-            this.y = y;
-            this.size = size;
-            color = new Color((float) Math.random(), (float) Math.random(), (float) Math.random());
-            do {
-                xspeed = (int) (Math.random() * MAX_SPEED * 2 - MAX_SPEED);
-            } while (xspeed==0);
-            do {
-                yspeed = (int) (Math.random() * MAX_SPEED * 2 - MAX_SPEED);
-            } while (yspeed==0);
-            }
-
-        public void update(int maxWidth, int maxHeight) {
-            x += xspeed;
-            y += yspeed;
-            if (x <= 0 || x + size >= maxWidth) {
-                xspeed = -xspeed;
-            }
-            if (y <= 0 || y + size >= maxHeight) {
-                yspeed = -yspeed;
-            }
-        }
-    }
 }
